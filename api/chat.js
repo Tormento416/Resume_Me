@@ -56,9 +56,9 @@ Cohesity | Global Escalation Leader / Risk Mitigation | Jul 2021 - Nov 2024
 
 Cohesity is a billion-dollar data security company. Their enterprise customers ran hybrid and multicloud backup and recovery environments at serious scale, and when something broke at that scale, it broke loudly.
 
-I inherited customers who had already lost faith. They weren't calling anymore -- they were threatening to leave. My first job wasn't to fix anything. It was to become their new eyes. And you can't see something you don't understand, so I always started the same way: I told them I'd reviewed everything, that it was a mess, and that I wanted to hear from them directly -- right now -- how it was impacting them. Not how it started. How it hurt.
+I inherited customers who had already lost faith. They weren't calling anymore -- they were threatening to leave. My first job wasn't to fix anything. It was to rebuild trust. And you can't rebuild trust in a system you don't understand, so I always started the same way: I told them I had reviewed everything, acknowledged it was a mess, and that I wanted to hear from them directly -- right now -- how it was impacting their business. Not how it started. What it was costing them today.
 
-One customer had three open tickets for over a month. It was past annoying -- it was costing them money. A hostile call. Their first words: 'How does throwing someone new into the mix solve anything?' My first sentence back: 'I've reviewed everything notated by my colleagues in previous calls and previous attempts to resolve this, but it's a mess. I want to know from you, right now, what's going on, and how is it impacting you. We can get into how it started later.' The room shifted immediately.
+One customer had three open tickets for over a month. At that point it was beyond a support issue -- it was a business impact. A hostile call. Their first words: 'How does throwing someone new into the mix solve anything?' My first sentence back: 'I've reviewed everything notated by my colleagues in previous calls and previous attempts to resolve this, but it's a mess. I want to know from you, right now, what's going on, and how is it impacting you. We can get into how it started later.' The room shifted immediately.
 
 The issue turned out to be metadata corruption happening between AWS archival levels -- something neither side could have predicted. We resolved it by building an adjacent tracking file that maintained metadata state regardless of what archival level the backup was in. The ticket got closed. But more importantly, the next customer never had to open that ticket at all.
 
@@ -135,7 +135,7 @@ export default async function handler(req, res) {
   const conversationBlock = history ? history + '\n' : '';
 
   const fullPrompt =
-    'You are Adrian Sousa, speaking in first person in a natural, warm, direct, and confident tone -- like you are in a real interview or having a coffee chat with someone you respect.\n' +
+    'You are Adrian Sousa, speaking in first person in a direct, confident, and professionally grounded tone -- like you are in a real interview or a professional conversation with someone you respect.\n' +
     'You have strong opinions. You tell stories. You are specific. You use real details from your experience.\n' +
     'Answer using the RESUME DATA below. Be specific and tell the story of how you actually did the work, not just that you did it.\n' +
     'When asked about a tool (Grafana, Terraform, Ansible, Datadog, etc.), explain how you used it, in what context, and what outcome it produced. Use the specific stories in the training data.\n' +
@@ -143,7 +143,7 @@ export default async function handler(req, res) {
     'When asked to elaborate or tell me more, go deeper -- share the reasoning, the challenge, the human moment, or the outcome behind the answer.\n' +
     'When asked what kind of role you are looking for, be honest: you want a Series A to Series C company with real problems, room to build, and a growth trajectory. Title is irrelevant. Impact is everything.\n' +
     'If something is not in the resume data, say: That is not something I have covered in my background, but feel free to ask about my experience or my work.\n' +
-    'Use paragraphs for storytelling questions. Keep responses focused but never robotic.\n' +
+    'Use paragraphs for storytelling questions. Keep responses focused but never robotic. Never begin a response with casual or dismissive openers like 'Look,' 'Honestly,' 'Here is the thing,' or similar. Open with substance -- a direct, professional statement that earns the reader's attention.\n' +
     'RESUME DATA START\n' + RESUME_DATA + 'RESUME DATA END\n\n' +
     conversationBlock +
     'User: ' + message.trim() + '\n\n' +
