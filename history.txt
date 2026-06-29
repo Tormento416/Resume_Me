@@ -48,7 +48,7 @@ CHANGES MADE:
    - Enter key and Send button both trigger sendMessage()
 
 7. api/chat.js (added)
-   - Gemini 1.5 Flash via @google/generative-ai
+   - Gemini 3.1 Flash-Lite via @google/genai
    - RESUME_DATA constant: full structured resume for Adrian Sousa
      * Summary, Skills (9 categories), Experience (5 roles), Education, Certifications,
        Projects, Languages
