@@ -74,3 +74,21 @@ NEXT STEPS FOR DEPLOYMENT:
 - To update resume data: edit RESUME_DATA in api/chat.js
 - To adjust memory depth: change MAX_HISTORY in public/app.js
 ============================================================
+
+
+[2026-06-29] - Google SDK deprecation fix
+------------------------------------------------------------
+Author: Comet (AI assistant) on behalf of Adrian Sousa (Tormento416)
+
+CHANGES MADE:
+
+1. api/chat.js (updated)
+   - Replaced deprecated `const { GoogleGenerativeAI } = require('@google/generative-ai')`
+     with new pattern: `const genai = require('@google/generative-ai').GoogleGenerativeAI`
+   - Renamed all internal references from `GoogleGenerativeAI` and `genAI` to `genai`
+   - Client instantiation updated from `new GoogleGenerativeAI(apiKey)` to `new genai(apiKey)`
+   - Stored as `client` variable for clarity: `const client = new genai(apiKey)`
+   - All other logic (RESUME_DATA, prompt, memory, handler) unchanged
+   - Reason: Google deprecated the named-export destructuring pattern in favor of
+     `import google.generativeai as genai` style (mirrored in Node.js SDK)
+============================================================
