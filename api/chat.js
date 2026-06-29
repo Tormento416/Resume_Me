@@ -1,12 +1,10 @@
-const { GoogleGenAI } = require('@google/genai');
-
 const RESUME_DATA = `
 NAME: Adrian Sousa
 LOCATION: Lake Norman of Catawba, NC
 CONTACT: adrian.m.sousa@gmail.com
 
 SUMMARY:
-Technology generalist with 10+ years across customer-facing delivery, global escalations, SRE, infrastructure, and data-driven operations. Works best on technical, visible, urgent problems. Currently building AI products through HyrLink. Targeting: TAM, Forward Deployed Engineer, SRE, customer-facing platform roles.
+Technology generalist with 10+ years across customer-facing delivery, global escalations, SRE, infrastructure, and AI application development. Currently building HyrLink, a GenAI hiring platform. Targeting TAM, Forward Deployed Engineer, and technical delivery roles.
 
 SKILLS:
 - Languages: Python, Golang, Java, JavaScript, TypeScript, SQL, Bash, PowerShell
@@ -29,6 +27,7 @@ HyrLink | Founder / Lead Engineer | Nov 2025 - Present
 Finish Line Factory | Sr Data Architect / Software Engineer | Feb 2025 - Jan 2026
 - Grew revenue from $1.2M to $2.7M through data pipeline improvements
 - AWS/Azure data pipelines, SQL automation, dashboards, runbooks
+- API-driven analysis of parts orders, payroll, cost-vs-revenue, marketing spend
 
 Cohesity | Global Escalation Leader / Risk Mitigation | Jul 2021 - Nov 2024
 - Reduced MTTR by 30%, repeat incidents by 20-30%
@@ -63,24 +62,44 @@ LANGUAGES: English (Native), Spanish (Professional)
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
   const { message, history } = req.body;
-  if (!message || message.trim() === '') return res.status(400).json({ error: 'Message required' });
+  if (!message || message.trim() === '') return res.status(400).json({ error: 'Message is required' });
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
+
   try {
-        const client = new GoogleGenAI({ apiKey });
-            // client ready - see generateContent call below
     const conversationBlock = history ? 'CONVERSATION SO FAR:\n' + history + '\n\n' : '';
     const fullPrompt = 'You are an AI assistant answering as Adrian Sousa in first person.\n'
       + 'Answer ONLY using facts from RESUME DATA. Do not invent or guess.\n'
       + 'If not in the data say: That is not in my resume, feel free to ask about my experience or skills.\n'
-      + 'Be concise and direct. Use bullet points for lists. Stay consistent with prior answers.\n\n'
+      + 'Be concise and direct. Use bullet points for lists. Stay consistent with prior answers.\n'
       + 'RESUME DATA START\n' + RESUME_DATA + 'RESUME DATA END\n\n'
       + conversationBlock
       + 'User question: ' + message.trim() + '\n\n'
       + 'Rules: Only use RESUME DATA facts. Never fabricate. Be consistent with prior answers.';
-                    const result = await client.models.generateContent({ model: 'gemini-2.5-flash-lite', contents: fullPrompt });
-        return res.status(200).json({ reply: result.text });
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: fullPrompt }] }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('Gemini API error:', errText);
+      return res.status(500).json({ error: 'Gemini API error: ' + errText });
+    }
+
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+    return res.status(200).json({ reply });
+
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Failed to generate response' });
