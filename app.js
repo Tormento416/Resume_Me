@@ -27,8 +27,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const introEl = document.getElementById('intro-text');
   setTimeout(() => typewriterIntro(INTRO_TEXT, introEl), 400);
 
-  const input = document.getElementById('user-input');
-  input.addEventListener('keydown', (e) => {
+  // FIX 1: Use event listener on input directly - no closure capture
+  document.getElementById('user-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -37,9 +37,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- Chip buttons ---
+// FIX 1: sendChip always reads fresh from DOM, then calls sendMessage
 function sendChip(btn) {
   const text = btn.textContent.trim();
-  document.getElementById('user-input').value = text;
+  const input = document.getElementById('user-input');
+  input.value = text;
+  input.dispatchEvent(new Event('input'));
   sendMessage();
 }
 
@@ -75,20 +78,22 @@ async function analyzeJD() {
   const textarea = document.getElementById('jd-textarea');
   const urlInput = document.getElementById('jd-url-input');
   const pasteVisible = document.getElementById('jd-paste-content').style.display !== 'none';
-
   let jdContent = pasteVisible ? textarea.value.trim() : urlInput.value.trim();
   if (!jdContent) return;
 
-  toggleJD();
+  // FIX 3: Detect LinkedIn URLs and block - LinkedIn prevents server-side scraping
+  if (!pasteVisible && /linkedin\.com/i.test(jdContent)) {
+    appendAdrianMessage('LinkedIn blocks automated access to job postings. To analyze this role, copy the job description text and paste it into the "Paste JD" tab instead.');
+    return;
+  }
 
+  toggleJD();
   const userMsg = pasteVisible
     ? 'Analyze how my experience fits this job description:\n\n' + jdContent
     : 'Analyze how my experience fits the job at: ' + jdContent;
-
   appendUserMessage('Analyzing job description fit...');
   const thinkingEl = appendThinking();
   setSendDisabled(true);
-
   try {
     const res = await fetch('/api/analyze', {
       method: 'POST',
@@ -108,31 +113,27 @@ async function analyzeJD() {
     thinkingEl.remove();
     appendAdrianMessage('Had trouble reaching the server. Try again in a moment.');
   }
-
   setSendDisabled(false);
   textarea.value = '';
   urlInput.value = '';
 }
 
 // --- Main chat send ---
+// FIX 1: Always read input fresh from DOM - no stale closure
 async function sendMessage() {
   const input = document.getElementById('user-input');
   const message = input.value.trim();
   if (!message || isTyping) return;
-
   input.value = '';
   appendUserMessage(message);
   const thinkingEl = appendThinking();
   setSendDisabled(true);
   isTyping = true;
-
   // Hide chips after first message
   document.getElementById('prompt-chips').style.display = 'none';
-
   const history = conversationHistory
     .map(m => (m.role === 'user' ? 'User: ' : 'Adrian: ') + m.text)
     .join('\n');
-
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -152,7 +153,6 @@ async function sendMessage() {
     thinkingEl.remove();
     appendAdrianMessage('Had trouble connecting. Try again in a moment.');
   }
-
   isTyping = false;
   setSendDisabled(false);
 }
@@ -167,6 +167,37 @@ function appendUserMessage(text) {
   scrollToBottom();
 }
 
+// FIX 2: Render markdown from AI responses (bold, headers, bullets)
+function renderMarkdown(text) {
+  // Escape HTML first to prevent injection
+  let safe = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Convert ### headings
+  safe = safe.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+  // Convert ## headings
+  safe = safe.replace(/^##\s+(.+)$/gm, '<h3>$1</h3>');
+  // Convert **bold**
+  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Convert *italic*
+  safe = safe.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Convert - bullet lines into list items
+  safe = safe.replace(/^-\s+(.+)$/gm, '<li>$1</li>');
+  // Wrap consecutive <li> items in <ul>
+  safe = safe.replace(/(<li>.*<\/li>\n?)+/g, (match) => '<ul>' + match + '</ul>');
+  // Convert double newlines to paragraph breaks
+  const blocks = safe.split(/\n\n+/);
+  return blocks.map(block => {
+    block = block.trim();
+    if (!block) return '';
+    // Don't wrap already-tagged blocks
+    if (/^<(h[1-6]|ul|ol|li)/.test(block)) return block;
+    return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+}
+
 function appendAdrianMessage(text) {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
@@ -176,9 +207,8 @@ function appendAdrianMessage(text) {
   label.textContent = 'Adrian';
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  // Convert newlines to paragraphs
-  const paragraphs = text.split(/\n\n+/);
-  bubble.innerHTML = paragraphs.map(p => '<p>' + escapeHtml(p.trim()) + '</p>').join('');
+  // FIX 2: Use markdown renderer instead of plain escapeHtml
+  bubble.innerHTML = renderMarkdown(text);
   div.appendChild(label);
   div.appendChild(bubble);
   msgs.appendChild(div);
