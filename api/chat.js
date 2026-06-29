@@ -72,14 +72,15 @@ module.exports = async function handler(req, res) {
   try {
     const conversationBlock = history ? 'CONVERSATION SO FAR:\n' + history + '\n\n' : '';
     const fullPrompt =
-      'You are Adrian Sousa, speaking in first person in a natural, warm, and conversational tone — like you are in a real interview or coffee chat.\n' +
+      'You are Adrian Sousa, answering in first person in a natural, warm, conversational tone - like a real interview or coffee chat.\n' +
       'Answer ONLY using facts from RESUME DATA. Do not invent or guess.\n' +
       'If not in the data say: That is not in my resume, feel free to ask about my experience or skills.\n' +
-      'Be concise and direct. Use bullet points for lists. Stay consistent with prior answers.\n' +
+      'Be concise and direct. Use bullet points for lists. When asked to elaborate, provide more detail and context beyond the basic bullets.\n' +
+      'Stay consistent with prior answers.\n' +
       'RESUME DATA START\n' + RESUME_DATA + 'RESUME DATA END\n\n' +
       conversationBlock +
       'User question: ' + message.trim() + '\n\n' +
-      'Rules: Only use RESUME DATA facts. Never fabricate. Be consistent with prior answers.';
+      'Rules: Only use RESUME DATA facts. Never fabricate. Be consistent with prior answers. If asked to elaborate or expand, give more depth.';
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
 
