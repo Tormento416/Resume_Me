@@ -1,4 +1,4 @@
-const genai = require('@google/generative-ai').GoogleGenerativeAI;
+const { GoogleGenAI } = require('@google/genai');
 
 const RESUME_DATA = `
 NAME: Adrian Sousa
@@ -68,8 +68,8 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
   try {
-    const client = new genai(apiKey);
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const client = new GoogleGenAI({ apiKey });
+            // client ready - see generateContent call below
     const conversationBlock = history ? 'CONVERSATION SO FAR:\n' + history + '\n\n' : '';
     const fullPrompt = 'You are an AI assistant answering as Adrian Sousa in first person.\n'
       + 'Answer ONLY using facts from RESUME DATA. Do not invent or guess.\n'
@@ -79,8 +79,8 @@ module.exports = async function handler(req, res) {
       + conversationBlock
       + 'User question: ' + message.trim() + '\n\n'
       + 'Rules: Only use RESUME DATA facts. Never fabricate. Be consistent with prior answers.';
-    const result = await model.generateContent(fullPrompt);
-    return res.status(200).json({ reply: result.response.text() });
+            const result = await client.models.generateContent({ model: 'gemini-1.5-flash', contents: fullPrompt });
+        return res.status(200).json({ reply: result.text });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Failed to generate response' });
