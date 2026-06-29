@@ -126,7 +126,7 @@ On leadership and teaching:
 I want to train the people taking those Friday calls. I want them to learn what it's like in the trenches and how to get themselves and their clients out of them. If I can teach them to do that, their career is set. Not just the technical playbook -- the human one.
 `;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { message, history } = req.body;
