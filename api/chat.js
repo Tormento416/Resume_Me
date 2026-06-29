@@ -79,7 +79,7 @@ module.exports = async function handler(req, res) {
       + conversationBlock
       + 'User question: ' + message.trim() + '\n\n'
       + 'Rules: Only use RESUME DATA facts. Never fabricate. Be consistent with prior answers.';
-            const result = await client.models.generateContent({ model: 'gemini-1.5-flash', contents: fullPrompt });
+                    const result = await client.models.generateContent({ model: 'gemini-2.5-flash-lite', contents: fullPrompt });
         return res.status(200).json({ reply: result.text });
   } catch (err) {
     console.error(err);
