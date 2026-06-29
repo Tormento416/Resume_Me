@@ -1,0 +1,76 @@
+AI_resume_chatbot - Change History
+Repository: https://github.com/Tormento416/AI_resume_chatbot
+============================================================
+
+[2026-06-29] - Initial project creation and full build
+------------------------------------------------------------
+Author: Comet (AI assistant) on behalf of Adrian Sousa (Tormento416)
+
+CHANGES MADE:
+
+1. REPOSITORY CREATED
+   - Created new public GitHub repository: Tormento416/AI_resume_chatbot
+   - Description: AI-powered resume QA chatbot for Adrian Sousa
+   - Branch: main
+   - No auto-initialized README (clean empty start)
+
+2. package.json (added)
+   - Project metadata: name, version, description
+   - Dependency: @google/generative-ai ^0.2.1
+   - Engine requirement: Node.js >= 18
+
+3. vercel.json (added)
+   - Vercel v2 deployment config
+   - Builds: api/chat.js via @vercel/node, public/** and index.html via @vercel/static
+   - Routes: /api/chat -> api/chat.js, / -> index.html, /style.css, /app.js -> public/app.js
+
+4. index.html (added)
+   - Chat UI structure: header with AS avatar, message window, input area, footer
+   - Green/gold themed header ("Ask Adrian's Resume")
+   - Loads style.css and /app.js
+   - Accessible, responsive HTML5 markup
+
+5. style.css (added)
+   - Full green and gold color theme replacing original dark blue
+   - CSS variables: --bg-dark (#0d1a0f), --green-primary (#2ecc71), --gold-primary (#f0c040)
+   - Styled: chat wrapper, header with gold avatar + gold title, user bubbles in gold gradient
+   - Bot bubbles in dark green panel; green scrollbar; green send button
+   - Animated typing indicator (3-dot green bounce)
+   - Responsive breakpoint at 600px
+
+6. public/app.js (added)
+   - Frontend logic for chat UI
+   - Conversation memory: maintains rolling history of last 8 turns (MAX_HISTORY = 8)
+   - buildHistoryBlock() serializes prior turns into labeled text for backend injection
+   - appendMessage(), showTyping(), removeTyping(), setLoading() UI helpers
+   - Fetch POST to /api/chat with { message, history } payload
+   - Error handling for API failures and network errors
+   - Enter key and Send button both trigger sendMessage()
+
+7. api/chat.js (added)
+   - Gemini 1.5 Flash via @google/generative-ai
+   - RESUME_DATA constant: full structured resume for Adrian Sousa
+     * Summary, Skills (9 categories), Experience (5 roles), Education, Certifications,
+       Projects, Languages
+   - Conversation memory: injects history block into prompt per request
+   - Tightened prompt rules:
+     * Answer ONLY from RESUME DATA
+     * Never fabricate companies, roles, dates, or skills
+     * Stay consistent with conversation so far
+     * Use bullet points for skill/tool lists
+     * Fallback phrase if out of scope
+   - POST /api/chat handler with input validation and error handling
+   - Requires GEMINI_API_KEY environment variable in Vercel settings
+
+8. history.txt (this file)
+   - Change log tracking all modifications to this repository
+   - Will be updated with each future change session
+
+============================================================
+NEXT STEPS FOR DEPLOYMENT:
+- Connect this repo to Vercel (vercel.com -> Import Project)
+- Add environment variable: GEMINI_API_KEY = your Gemini API key
+- Deploy and test at your Vercel URL
+- To update resume data: edit RESUME_DATA in api/chat.js
+- To adjust memory depth: change MAX_HISTORY in public/app.js
+============================================================
