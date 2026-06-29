@@ -30,18 +30,18 @@ Finish Line Factory | Sr Data Architect / Software Engineer | Feb 2025 - Jan 202
 - API-driven analysis of parts orders, payroll, cost-vs-revenue, marketing spend
 
 Cohesity | Global Escalation Leader / Risk Mitigation | Jul 2021 - Nov 2024
-- Reduced MTTR by 30%, repeat incidents by 20-30%
+- Led Agile style workflows with cross-functional stakeholders to prevent financial and performance impacts to internal departmentsd and customers alike.
+- Engagements reduced risk in estimates of $2.5M to $4M per quarter
 - 20-30 enterprise escalation cases per quarter; C-suite executive syncs
-- Tools: Ansible, Terraform, OpenShift, Grafana, Artifactory, Git
-
-Cohesity | Sr SRE / Sr Production Engineer (Tier 2/3) | Sep 2022 - Jun 2023
+- Tools: Asana, Tableau, Snowflake, Datadog, CentOS, Grafana, Github
 - Observability on AWS/Azure/GCP with Grafana, Datadog, Cloud Monitoring
 - Terraform/Helm for Kubernetes/OpenShift; 42% reliability improvement
+- Onboarding for Engineering and Support staff improved from 90 to 30 days
 
 HCL Technologies | Sr IT Analyst | Dec 2018 - Jun 2021
-- Reduced manual tasks 40% via Ansible/PowerShell automation
-- Improved client retention 24%, cut resolution time 38%, tickets 41%
-- Onboarding improved from 90 to 30 days
+- Reduced manual tasks by 40% for external clients via Ansible/PowerShell automation
+- Improved resolution time 38%
+
 
 ISG / PBIR | Sr Data Marketing Engineer | Oct 2015 - Feb 2018
 - Data pipelines, SQL, Tableau, Snowflake, Power BI for SLA and KPI reporting
