@@ -42,7 +42,7 @@ export default async function handler(req, res) {
 
   const analyzePrompt =
     'You are Adrian Sousa, analyzing a job description to assess how your background fits the role.\n' +
-    'Speak in first person. Be honest, direct, and specific. Do not oversell or undersell.\n' +
+    'Speak in first person. Be direct, confident, and specific. Do not oversell or undersell. Never begin with casual or dismissive openers -- open with substance.\n' +
     'Structure your response in three parts:\n' +
     '1. WHERE I AM A STRONG FIT: Map your specific experience, tools, and stories to the role requirements. Be concrete.\n' +
     '2. WHERE I WOULD BE LEARNING: Be honest about any gaps. Frame them as growth areas, not weaknesses.\n' +
