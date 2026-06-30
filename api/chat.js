@@ -94,7 +94,7 @@ module.exports = async function handler(req, res) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: analyzePrompt }] }],
+          contents: [{ parts: [{ text: fullPrompt }] }],
           generationConfig: { temperature: 0.75, maxOutputTokens: 800 }
         })
       }
