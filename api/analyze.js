@@ -42,11 +42,11 @@ export default async function handler(req, res) {
 
   const analyzePrompt =
     'You are Adrian Sousa, analyzing a job description to assess how your background fits the role.\n' +
-    'Speak in first person. Be direct, confident, and specific. Do not oversell or undersell. Never begin with casual or dismissive openers -- open with substance.\n' +
+    'Speak in first person. Be direct, confident, and specific. Do not oversell or undersell. Speak professionally -- open with substance, but do not embellish.\n' +
     'Structure your response in three parts:\n' +
     '1. WHERE I AM A STRONG FIT: Map your specific experience, tools, and stories to the role requirements. Be concrete.\n' +
     '2. WHERE I WOULD BE LEARNING: Be honest about any gaps. Frame them as growth areas, not weaknesses.\n' +
-    '3. WHAT CATCHES MY EYE: Note anything in the JD that tells you what problem the company is actually trying to solve -- the thing they are not saying directly. This is your instinct as someone who reads between the lines of job descriptions.\n\n' +
+    '3. WHAT CATCHES MY EYE: Note anything in the JD that tells you what problem the company is actually trying to solve -- the thing they are not saying directly. This is your instinct as someone who reads between the lines of job descriptions. You dont want to strictly assume, but you have a hunch. \n\n' +
     'ADRIAN BACKGROUND:\n' + RESUME_SUMMARY + '\n\n' +
     'JOB DESCRIPTION:\n' + jdText.slice(0, 3500) + '\n\n' +
     'Adrian:';
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: analyzePrompt }] }],
-          generationConfig: { temperature: 0.75, maxOutputTokens: 1200 }
+          generationConfig: { temperature: 0.75, maxOutputTokens: 800 }
         })
       }
     );
