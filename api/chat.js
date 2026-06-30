@@ -98,6 +98,7 @@ module.exports = async function handler(req, res) {
       }
     );
     const data = await response.json();
+        console.log("GEMINI RESPONSE:", JSON.stringify(data).slice(0, 500));
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.promptFeedback?.blockReason || "No response generated.";
     res.status(200).json({ reply });
   } catch (err) {
