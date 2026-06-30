@@ -7,7 +7,9 @@
     "start": "node api/chat.js"
   },
   "type": "module",
-  "dependencies": {},
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
   "engines": {
     "node": ">=18"
   }
