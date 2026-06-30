@@ -45,6 +45,10 @@ function sendChip(btn) {
   input.dispatchEvent(new Event('input'));
   sendMessage();
 }
+function sendChip(el) {
+  inputEl.value = el.textContent;
+  sendMessage();
+}
 
 // --- JD panel toggle ---
 function toggleJD() {
