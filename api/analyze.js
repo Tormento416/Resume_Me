@@ -12,12 +12,7 @@ Target role: Series A-C company with real infrastructure problems, room to build
 Key differentiator: Bridges technical depth with executive-level communication. The person organizations call when something critical breaks -- and the person who builds the systems and teams that pre[...]
 `;
 
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
-const ALLOWED_GEMINI_MODEL = process.env.ALLOWED_GEMINI_MODEL || "gemini-3.1-flash-lite";
-
-if (GEMINI_MODEL !== ALLOWED_GEMINI_MODEL) {
-  throw new Error(`Model mismatch: ${GEMINI_MODEL} != ${ALLOWED_GEMINI_MODEL}`);
-}
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -66,7 +61,7 @@ Adrian:
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
