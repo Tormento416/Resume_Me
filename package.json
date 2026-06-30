@@ -1,11 +1,12 @@
 {
   "name": "ai-resume-chatbot",
-  "version": "2.0.1",
+  "version": "2.0.5",
   "description": "AI-powered resume QA chatbot for Adrian Sousa",
   "main": "index.js",
   "scripts": {
     "start": "node api/chat.js"
   },
+  "type": "module",
   "dependencies": {},
   "engines": {
     "node": ">=18"
