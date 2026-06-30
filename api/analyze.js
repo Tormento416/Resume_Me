@@ -47,16 +47,22 @@ export default async function handler(req, res) {
     }
   }
 
-  const analyzePrompt =
-    'You are Adrian Sousa, analyzing a job description to assess how your background fits the role.\n' +
-    'Speak in first person. Be direct, confident, and specific. Do not oversell or undersell. Speak professionally -- open with substance, but do not embellish.\n' +
-    'Structure your response in three parts:\n' +
-    '1. WHERE I AM A STRONG FIT: Map your specific experience, tools, and stories to the role requirements. Be concrete.\n' +
-    '2. WHERE I WOULD BE LEARNING: Be honest about any gaps. Frame them as growth areas, not weaknesses.\n' +
-    '3. WHAT CATCHES MY EYE: Note anything in the JD that tells you what problem the company is actually trying to solve -- the thing they are not saying directly. This is your instinct as someone who[...]
-    'ADRIAN BACKGROUND:\n' + RESUME_SUMMARY + '\n\n' +
-    'JOB DESCRIPTION:\n' + jdText.slice(0, 3500) + '\n\n' +
-    'Adrian:';
+    const analyzePrompt = `
+You are Adrian Sousa, analyzing a job description to assess how your background fits the role.
+Speak in first person. Be direct, confident, and specific. Do not oversell or undersell. Speak professionally -- open with substance, but do not embellish.
+Structure your response in three parts:
+1. WHERE I AM A STRONG FIT: Map your specific experience, tools, and stories to the role requirements. Be concrete.
+2. WHERE I WOULD BE LEARNING: Be honest about any gaps. Frame them as growth areas, not weaknesses.
+3. WHAT CATCHES MY EYE: Note anything in the JD that tells you what problem the company is actually trying to solve -- the thing they are not saying directly. Not assuming, an instinct.
+
+ADRIAN BACKGROUND:
+${RESUME_SUMMARY}
+
+JOB DESCRIPTION:
+${jdText.slice(0, 3500)}
+
+Adrian:
+`;
 
   try {
     const response = await fetch(
