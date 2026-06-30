@@ -73,12 +73,7 @@ On job descriptions: Most JDs are a wishlist written by a committee. The role th
 On what I want next: I want to join a team that is building something real and running into problems that are genuinely hard. Not hard because they are disorganized -- hard because the problem its[...]
 `;
 
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
-const ALLOWED_GEMINI_MODEL = process.env.ALLOWED_GEMINI_MODEL || "gemini-3.1-flash-lite";
-
-if (GEMINI_MODEL !== ALLOWED_GEMINI_MODEL) {
-  throw new Error(`Model mismatch: ${GEMINI_MODEL} != ${ALLOWED_GEMINI_MODEL}`);
-}
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -94,13 +89,13 @@ module.exports = async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: fullPrompt }] }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+          contents: [{ parts: [{ text: analyzePrompt }] }],
+          generationConfig: { temperature: 0.75, maxOutputTokens: 800 }
         })
       }
     );
