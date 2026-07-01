@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Adrian Sousa</title>
   <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #0b1628; background-image: radial-gradient(ellipse at 20% 50%, rgba(30,60,120,0.4) 0%, transparent 60%), radial-gradient(ellipse at 80% 10%, rgba(15,40,90,0.5) 0%, transparent 55%); color: #e8e8e8; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    body { width: 100%; font-family: 'Inter', sans-serif; background: #0b1628; background-image: radial-gradient(ellipse at 20% 50%, rgba(30,60,120,0.4) 0%, transparent 60%), radial-gradient(ellipse at 80% 10%, rgba(15,40,90,0.5) 0%, transparent 55%); color: #e8e8e8; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
     .header-block { padding: 24px 20px 16px; text-align: center; }
     .header-block h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: #fff; }
     .header-block .tagline { font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 4px; font-style: italic; }
@@ -41,22 +41,57 @@
     #analyze-btn { margin: 0 14px 14px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.35); color: #c9a84c; padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
     #analyze-btn:hover { background: rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.6); }
     #prompt-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; margin: 0 12px; background: rgba(255,255,255,0.04); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); }
-    .chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.65); padding: 7px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.65); padding: 7px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: normal; text-align: left; line-height: 1.4; }
     .chip:hover { border-color: rgba(201,168,76,0.5); color: #f0d080; background: rgba(201,168,76,0.08); }
-    #input-area { display: flex; align-items: center; gap: 10px; padding: 12px 16px 14px; margin: 0 12px; background: rgba(255,255,255,0.06); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-top: none; border-radius: 0 0 18px 18px; }
+    #input-area { display: flex; align-items: center; gap: 10px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); margin: 0 12px; background: rgba(255,255,255,0.06); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-top: none; border-radius: 0 0 18px 18px; }
     #jd-toggle { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     #jd-toggle:hover { border-color: rgba(201,168,76,0.4); color: #c9a84c; }
-    #user-input { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 22px; padding: 11px 16px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+    #user-input { flex: 1; min-width: 0; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 22px; padding: 11px 16px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
     #user-input:focus { border-color: rgba(201,168,76,0.45); }
     #user-input::placeholder { color: rgba(255,255,255,0.3); }
     #send-btn { background: linear-gradient(135deg, #b8922a, #e8c84a, #b8922a); background-size: 200% auto; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; animation: gold-shimmer 3s linear infinite; }
     #send-btn:hover { transform: scale(1.06); box-shadow: 0 0 12px rgba(201,168,76,0.5); }
     #send-btn:disabled { background: rgba(255,255,255,0.1); cursor: not-allowed; animation: none; }
     #send-btn svg { width: 18px; height: 18px; fill: #0b1628; }
-    #footer { text-align: center; padding: 10px 20px 14px; }
+    #footer { text-align: center; padding: 10px 20px calc(14px + env(safe-area-inset-bottom)); }
     #footer a { color: rgba(255,255,255,0.25); font-size: 12px; text-decoration: none; margin: 0 12px; transition: color 0.2s; }
     #footer a:hover { color: #c9a84c; }
-    @media (max-width: 600px) { .chip { font-size: 12px; padding: 6px 12px; } .msg-user .bubble, .msg-adrian .bubble { font-size: 14px; } #chat-messages, #prompt-chips, #input-area { margin: 0 6px; } }
+
+    /* ===== Responsive breakpoints ===== */
+    /* Small phones: tighten spacing, widen bubbles, shrink header */
+    @media (max-width: 600px) {
+      .header-block { padding: 16px 16px 10px; }
+      .header-block h1 { font-size: 19px; }
+      .header-block .tagline { font-size: 12px; }
+      .chip { font-size: 12px; padding: 6px 12px; }
+      .msg-user .bubble { font-size: 14px; max-width: 88%; }
+      .msg-adrian .bubble { font-size: 14px; }
+      #chat-messages, #prompt-chips, #input-area, #jd-panel { margin: 0 6px; }
+      #jd-toggle { padding: 8px 10px; }
+    }
+
+    /* Tablets and small laptops: a little breathing room over the phone layout */
+    @media (min-width: 601px) and (max-width: 899px) {
+      .header-block h1 { font-size: 23px; }
+    }
+
+    /* Larger screens: cap line length and center the app instead of stretching edge-to-edge */
+    @media (min-width: 900px) {
+      .header-block, #chat-messages, #prompt-chips, #jd-panel, #input-area, #footer {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+      }
+    }
+
+    /* Touch devices: enlarge tap targets regardless of screen size */
+    @media (pointer: coarse) {
+      .chip { padding: 9px 16px; }
+      #jd-toggle { padding: 10px 14px; }
+      #send-btn { width: 44px; height: 44px; }
+      .jd-tab { padding: 13px 10px; }
+    }
   </style>
 </head>
 <body>

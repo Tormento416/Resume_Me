@@ -155,3 +155,32 @@ RESULT:
    - Remaining remote branches: main, v3, copilot/v3, copilot/debug-analyze-and-chat-issues,
      vercel/install-vercel-web-analytics-kgwuhu (left untouched, not part of this request)
 ============================================================
+
+
+[2026-07-01] - Started v4 branch: responsive/adaptive UI pass
+------------------------------------------------------------
+Author: GitHub Copilot (AI assistant) on behalf of Adrian Sousa (Tormento416)
+
+CHANGES MADE:
+
+1. New branch: v4 (created from v3, no commits diverged before this one)
+   - Per explicit request: UI/responsive work now happens on v4 so it cannot break
+     the currently working v3/main deployment. v3 and main are untouched by this work.
+
+2. index.html (updated) - responsive breakpoints added to the inline <style> block
+   - Small phones (<=600px): tighter header padding/font size, wider message bubbles
+     (72% -> 88% max-width), smaller chips, and the JD panel now included in the
+     margin-tightening rule (previously missed)
+   - Tablets (601px-899px): slightly larger header type as a middle tier
+   - Desktop (>=900px): caps the app at 760px wide, centered, so it no longer
+     stretches edge-to-edge on large monitors
+   - Touch devices (`pointer: coarse` media feature): enlarges tap targets (chips,
+     JD toggle, send button, JD tabs) to ~44px regardless of screen size
+   - Notched phones: added viewport-fit=cover and env(safe-area-inset-bottom)
+     padding on the input bar and footer so iOS home-indicator/gesture areas don't
+     overlap controls
+   - Deliberately used CSS media queries (screen size + pointer capability) instead
+     of user-agent/device sniffing in JS -- more robust and maintainable
+   - Confirmed style.css and public/app.js remain unused/unreferenced legacy files;
+     not touched by this change
+============================================================
