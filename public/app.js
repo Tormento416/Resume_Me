@@ -5,7 +5,7 @@
    ============================================ */
 
 (function () {
-  const MAX_HISTORY = 8;
+  const MAX_HISTORY = 24;
   const conversationHistory = [];
 
   const messagesEl = document.getElementById('chatMessages');
