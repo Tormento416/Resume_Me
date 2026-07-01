@@ -1,9 +1,10 @@
-// Adrian Sousa - v2 Frontend Logic
+// Generic frontend logic
 
-const INTRO_TEXT = "Hey — I'm Adrian. Ask me anything about my experience, my work, or what I'm looking for next.";
+const INTRO_TEXT = "Welcome. Ask me anything about this candidate's experience, work, or career goals.";
 
 let conversationHistory = [];
 let isTyping = false;
+let candidateProfile = null;
 
 // --- Typewriter intro on load ---
 function typewriterIntro(text, el, speed = 28) {
@@ -27,6 +28,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const introEl = document.getElementById('intro-text');
   setTimeout(() => typewriterIntro(INTRO_TEXT, introEl), 400);
 
+  setupIntakeForm();
+  setChatEnabled(false);
+
   // FIX 1: Use event listener on input directly - no closure capture
   document.getElementById('user-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -35,6 +39,43 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+function setupIntakeForm() {
+  const form = document.getElementById('intake-form');
+  const status = document.getElementById('intake-status');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('candidate-name').value.trim();
+    const email = document.getElementById('candidate-email').value.trim();
+    const phone = document.getElementById('candidate-phone').value.trim();
+    const resume = document.getElementById('candidate-resume').value.trim();
+
+    if (!name || !email || !resume) {
+      status.textContent = 'Please provide name, email, and resume before continuing.';
+      return;
+    }
+
+    candidateProfile = { name, email, phone, resume };
+    status.textContent = 'Saved. You can start the conversation now.';
+    setChatEnabled(true);
+
+    const intakePanel = document.getElementById('intake-panel');
+    intakePanel.style.display = 'none';
+
+    appendAssistantMessage('Profile received. I am ready to discuss your background.');
+  });
+}
+
+function setChatEnabled(enabled) {
+  document.getElementById('user-input').disabled = !enabled;
+  document.getElementById('send-btn').disabled = !enabled;
+  document.getElementById('jd-toggle').disabled = !enabled;
+  document.getElementById('analyze-btn').disabled = !enabled;
+  document.getElementById('prompt-chips').style.display = enabled ? 'flex' : 'none';
+  document.getElementById('user-input').placeholder = enabled ? 'Ask me anything...' : 'Complete the questionnaire to begin';
+}
 
 // --- Chip buttons ---
 // FIX 1: sendChip always reads fresh from DOM, then calls sendMessage
@@ -74,6 +115,8 @@ function switchTab(tab) {
 
 // --- JD Analyzer ---
 async function analyzeJD() {
+  if (!candidateProfile) return;
+
   const textarea = document.getElementById('jd-textarea');
   const urlInput = document.getElementById('jd-url-input');
   const pasteVisible = document.getElementById('jd-paste-content').style.display !== 'none';
@@ -82,7 +125,7 @@ async function analyzeJD() {
 
   // FIX 3: Detect LinkedIn URLs and block - LinkedIn prevents server-side scraping
   if (!pasteVisible && /linkedin\.com/i.test(jdContent)) {
-    appendAdrianMessage('LinkedIn blocks automated access to job postings. To analyze this role, copy the job description text and paste it into the "Paste JD" tab instead.');
+    appendAssistantMessage('LinkedIn blocks automated access to job postings. To analyze this role, copy the job description text and paste it into the "Paste JD" tab instead.');
     return;
   }
 
@@ -97,20 +140,20 @@ async function analyzeJD() {
     const res = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jdContent, isUrl: !pasteVisible })
+      body: JSON.stringify({ jdContent, isUrl: !pasteVisible, profile: candidateProfile })
     });
     const data = await res.json();
     thinkingEl.remove();
     if (data.reply) {
-      appendAdrianMessage(data.reply);
+      appendAssistantMessage(data.reply);
       conversationHistory.push({ role: 'user', text: userMsg });
-      conversationHistory.push({ role: 'adrian', text: data.reply });
+      conversationHistory.push({ role: 'assistant', text: data.reply });
     } else {
-      appendAdrianMessage('Something went wrong analyzing that JD. Try pasting the text directly.');
+      appendAssistantMessage('Something went wrong analyzing that JD. Try pasting the text directly.');
     }
   } catch (err) {
     thinkingEl.remove();
-    appendAdrianMessage('Had trouble reaching the server. Try again in a moment.');
+    appendAssistantMessage('Had trouble reaching the server. Try again in a moment.');
   }
   setSendDisabled(false);
   textarea.value = '';
@@ -120,6 +163,8 @@ async function analyzeJD() {
 // --- Main chat send ---
 // FIX 1: Always read input fresh from DOM - no stale closure
 async function sendMessage() {
+  if (!candidateProfile) return;
+
   const input = document.getElementById('user-input');
   const message = input.value.trim();
   if (!message || isTyping) return;
@@ -131,26 +176,26 @@ async function sendMessage() {
   // Hide chips after first message
   document.getElementById('prompt-chips').style.display = 'none';
   const history = conversationHistory
-    .map(m => (m.role === 'user' ? 'User: ' : 'Adrian: ') + m.text)
+    .map(m => (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.text)
     .join('\n');
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, history })
+      body: JSON.stringify({ message, history, profile: candidateProfile })
     });
     const data = await res.json();
     thinkingEl.remove();
     if (data.reply) {
-      appendAdrianMessage(data.reply);
+      appendAssistantMessage(data.reply);
       conversationHistory.push({ role: 'user', text: message });
-      conversationHistory.push({ role: 'adrian', text: data.reply });
+      conversationHistory.push({ role: 'assistant', text: data.reply });
     } else {
-      appendAdrianMessage('Something went wrong on my end. Try again.');
+      appendAssistantMessage('Something went wrong on my end. Try again.');
     }
   } catch (err) {
     thinkingEl.remove();
-    appendAdrianMessage('Had trouble connecting. Try again in a moment.');
+    appendAssistantMessage('Had trouble connecting. Try again in a moment.');
   }
   isTyping = false;
   setSendDisabled(false);
@@ -197,13 +242,13 @@ function renderMarkdown(text) {
   }).join('');
 }
 
-function appendAdrianMessage(text) {
+function appendAssistantMessage(text) {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.className = 'msg-adrian';
+  div.className = 'msg-assistant';
   const label = document.createElement('span');
   label.className = 'label';
-  label.textContent = 'Adrian';
+  label.textContent = 'Assistant';
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   // FIX 2: Use markdown renderer instead of plain escapeHtml
@@ -217,8 +262,8 @@ function appendAdrianMessage(text) {
 function appendThinking() {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.className = 'msg-adrian';
-  div.innerHTML = '<span class="label">Adrian</span><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+  div.className = 'msg-assistant';
+  div.innerHTML = '<span class="label">Assistant</span><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
   msgs.appendChild(div);
   scrollToBottom();
   return div;

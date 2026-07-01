@@ -1,6 +1,6 @@
 /* ============================================
    app.js - AI Resume Chatbot Frontend
-   Handles UI, conversation memory (last 8 turns),
+   Handles UI, conversation memory (last 24 turns),
    and communication with /api/chat
    ============================================ */
 
@@ -45,7 +45,7 @@
     return conversationHistory
       .slice(-MAX_HISTORY)
       .map(function(m) {
-        return (m.role === 'user' ? 'User' : 'Adrian') + ': ' + m.text;
+        return (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.text;
       })
       .join('\n');
   }
