@@ -92,3 +92,33 @@ CHANGES MADE:
    - Reason: Google deprecated the named-export destructuring pattern in favor of
      `import google.generativeai as genai` style (mirrored in Node.js SDK)
 ============================================================
+
+
+[2026-07-01] - Fixed critical syntax error in api/chat.js (chat endpoint 500 errors)
+------------------------------------------------------------
+Author: GitHub Copilot (AI assistant) on behalf of Adrian Sousa (Tormento416)
+
+ISSUE:
+   - /api/chat was returning HTTP 500 on every request while /api/analyze worked fine
+   - Root cause: api/chat.js contained a genuine JavaScript syntax error. The RESUME_DATA
+     and systemPrompt strings had been corrupted with literal "[...]" truncation markers
+     (introduced in commit 3b2cd12, "Enforce allowed Gemini model in chat endpoint"),
+     apparently from a prior AI editing session saving truncated preview text as real
+     file content instead of the full source.
+   - The truncation inside RESUME_DATA (a template literal) was harmless since template
+     literals can safely span multiple lines. But the same truncation inside the
+     systemPrompt variable (a double-quoted string) left that string unterminated,
+     which is a hard syntax error in JavaScript -- causing the whole serverless function
+     to fail to load on Vercel, hence the 500 on every request.
+   - api/analyze.js had the same style of truncation but only within its own template
+     literal (RESUME_SUMMARY), so it stayed syntactically valid and kept working.
+
+CHANGES MADE:
+
+1. api/chat.js (fixed)
+   - Restored the complete, non-truncated RESUME_DATA narrative text and systemPrompt
+     string, recovered from the last known-good commit (9fb8d3b) prior to the corruption
+   - Preserved all later intentional changes: ES6 `export default` syntax, GEMINI_MODEL
+     env-var constant, temperature 0.75 / maxOutputTokens 800, template-literal fetch URL
+   - Verified with `node --check api/chat.js` that the file now parses without errors
+============================================================
