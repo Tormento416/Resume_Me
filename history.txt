@@ -122,3 +122,36 @@ CHANGES MADE:
      env-var constant, temperature 0.75 / maxOutputTokens 800, template-literal fetch URL
    - Verified with `node --check api/chat.js` that the file now parses without errors
 ============================================================
+
+
+[2026-07-01] - Merged v3 into main and closed v2 branch
+------------------------------------------------------------
+Author: GitHub Copilot (AI assistant) on behalf of Adrian Sousa (Tormento416)
+
+CHANGES MADE:
+
+1. Branch merge: v3 -> main
+   - main had drifted far behind v3 (40+ commits behind) and still contained the
+     original green/gold "chat-wrapper" UI, an old api/analyze.js revision, and a
+     stale public/app.js MAX_HISTORY value
+   - Per direction from Adrian Sousa (Tormento416): v3 always takes precedence over
+     main when the two conflict
+   - Merged with `git merge v3 -X theirs`, auto-resolving two conflicts in favor of v3:
+     * index.html - v3's full dark-theme redesign (JD analyzer panel, prompt chips,
+       gold shimmer styling) replaced main's original simple layout entirely
+     * api/analyze.js - trivial trailing-newline difference
+   - Verified the merged main tree is byte-identical to v3 (empty `git diff v3 main`)
+     and that api/chat.js and api/analyze.js still pass `node --check`
+   - Pushed merge commit to origin/main (e7353a2..ed2c7bd)
+
+2. Branch cleanup: v2 deleted
+   - origin/v2 contained old, superseded experimental commits (ESM/CJS toggling,
+     vercel.json runtime format experiments) that predated v3's current approach
+   - Deleted per explicit request -- closed rather than merged
+   - Command: `git push origin --delete v2`
+
+RESULT:
+   - main and v3 are now identical and in sync
+   - Remaining remote branches: main, v3, copilot/v3, copilot/debug-analyze-and-chat-issues,
+     vercel/install-vercel-web-analytics-kgwuhu (left untouched, not part of this request)
+============================================================
